@@ -37,12 +37,33 @@ export default function Signup() {
       return
     }
 
-    // Simulate registration (in a real app, you'd call an API)
+    // Call signup API
     try {
-      // For demo purposes, just store the user data
-      localStorage.setItem('user', JSON.stringify({ name, email, loggedIn: true }))
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Registration failed')
+        setLoading(false)
+        return
+      }
+
+      // Store user data in localStorage and redirect to dashboard
+      localStorage.setItem('user', JSON.stringify({
+        ...data.user,
+        loggedIn: true
+      }))
+      
       router.push('/dashboard')
     } catch (err) {
+      console.error('Registration error:', err)
       setError('Registration failed. Please try again.')
     } finally {
       setLoading(false)

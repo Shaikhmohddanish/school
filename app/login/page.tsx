@@ -24,13 +24,33 @@ export default function Login() {
     }
 
     
-    // Simulate authentication (in a real app, you'd call an API)
+    // Call login API
     try {
-      // For demo purposes, accept any email/password combination
-      // In a real app, you'd validate against a backend
-      localStorage.setItem('user', JSON.stringify({ email, loggedIn: true }))
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Login failed')
+        setLoading(false)
+        return
+      }
+
+      // Store user data in localStorage and redirect to dashboard
+      localStorage.setItem('user', JSON.stringify({
+        ...data.user,
+        loggedIn: true
+      }))
+      
       router.push('/dashboard')
     } catch (err) {
+      console.error('Login error:', err)
       setError('Login failed. Please try again.')
     } finally {
       setLoading(false)
