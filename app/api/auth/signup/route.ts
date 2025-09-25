@@ -19,6 +19,8 @@ export async function POST(request: NextRequest) {
 
     // Check if user already exists
     const existingUser = await usersCollection.findOne({ email })
+    console.log(existingUser);
+    
     if (existingUser) {
       return NextResponse.json(
         { error: 'User with this email already exists' },
@@ -27,12 +29,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new user (without encryption for now)
+    const currentTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"})
     const newUser = {
       name,
       email,
       password, // Storing password as plain text (not recommended for production)
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date(currentTime),
+      updatedAt: new Date(currentTime),
     }
 
     // Insert user into database
