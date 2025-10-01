@@ -1,59 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCollection } from '@/lib/mongodb'
+import { AuthService } from '@/services/AuthService'
+import { CreateUserInput } from '@/types/user'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, password } = body
+    // const {name,email,password} = body
+    const userData: CreateUserInput = body
 
-    // Validate required fields
-    if (!name || !email || !password) {
+    // Use the AuthService to handle registration
+    const result = await AuthService.register(userData)
+
+    if (!result.success) {
+      const statusCode = result.error === 'User with this email already exists' ? 409 : 400
       return NextResponse.json(
-        { error: 'Name, email, and password are required' },
-        { status: 400 }
+        { 
+          error: result.error,
+          ...(result.details && { details: result.details })
+        },
+        { status: statusCode }
       )
-    }
-
-    // Get users collection
-    const usersCollection = await getCollection('users')
-
-    // Check if user already exists
-    const existingUser = await usersCollection.findOne({ email })
-    console.log(existingUser);
-    
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'User with this email already exists' },
-        { status: 409 }
-      )
-    }
-
-    // Create new user (without encryption for now)
-    const currentTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"})
-    const newUser = {
-      name,
-      email,
-      password, // Storing password as plain text (not recommended for production)
-      createdAt: new Date(currentTime),
-      updatedAt: new Date(currentTime),
-    }
-
-    // Insert user into database
-    const result = await usersCollection.insertOne(newUser)
-
-    // Return success response (without password)
-    const userResponse = {
-      _id: result.insertedId.toString(),
-      name,
-      email,
-      createdAt: newUser.createdAt,
-      updatedAt: newUser.updatedAt,
     }
 
     return NextResponse.json(
       {
         message: 'User created successfully',
-        user: userResponse,
+        user: result.data,
       },
       { status: 201 }
     )

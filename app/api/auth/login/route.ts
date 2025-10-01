@@ -1,52 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCollection } from '@/lib/mongodb'
+import { AuthService } from '@/services/AuthService'
+import { LoginUserInput } from '@/types/user'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password } = body
+    const credentials: LoginUserInput = body
 
-    // Validate required fields
-    if (!email || !password) {
+    // Use the AuthService to handle login
+    const result = await AuthService.login(credentials)
+
+    if (!result.success) {
+      const statusCode = result.error === 'Invalid email or password' ? 401 : 400
       return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
+        { error: result.error },
+        { status: statusCode }
       )
-    }
-
-    // Get users collection
-    const usersCollection = await getCollection('users')
-
-    // Find user by email
-    const user = await usersCollection.findOne({ email })
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      )
-    }
-
-    // Check password (plain text comparison for now)
-    if (user.password !== password) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      )
-    }
-
-    // Return success response (without password)
-    const userResponse = {
-      _id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
     }
 
     return NextResponse.json(
       {
         message: 'Login successful',
-        user: userResponse,
+        user: result.data,
       },
       { status: 200 }
     )
