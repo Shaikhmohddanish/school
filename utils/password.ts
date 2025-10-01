@@ -3,6 +3,7 @@
  * TODO: Implement actual password hashing using bcrypt
  */
 
+
 export class PasswordUtils {
   /**
    * Hash a password (placeholder implementation)
