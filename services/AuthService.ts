@@ -1,5 +1,6 @@
 import { UserModel } from '@/models/User';
 import { CreateUserInput, LoginUserInput, UserResponse } from '@/types/user';
+import { PasswordUtils } from '@/utils/password';
 
 /**
  * Authentication service for handling user authentication logic
@@ -34,8 +35,14 @@ export class AuthService {
         };
       }
 
-      // Create new user
-      const result = await UserModel.create(userData);
+      // Hash the password before storing
+      const hashedPassword = await PasswordUtils.hashPassword(userData.password);
+      
+      // Create new user with hashed password
+      const result = await UserModel.create({
+        ...userData,
+        password: hashedPassword
+      });
       
       // Get the created user
       const createdUser = await UserModel.findById(result.insertedId.toString());
@@ -89,9 +96,10 @@ export class AuthService {
         };
       }
 
-      // Check password (plain text comparison for now)
-      // TODO: Implement proper password hashing
-      if (user.password !== password) {
+      // Verify password using bcrypt
+      const isPasswordValid = await PasswordUtils.comparePassword(password, user.password);
+      
+      if (!isPasswordValid) {
         return {
           success: false,
           error: 'Invalid email or password',

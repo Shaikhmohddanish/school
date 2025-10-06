@@ -1,32 +1,20 @@
 /**
- * Password utility functions
- * TODO: Implement actual password hashing using bcrypt
+ * Password utility functions using bcrypt for secure hashing
  */
-
+import bcrypt from 'bcrypt';
 
 export class PasswordUtils {
-  /**
-   * Hash a password (placeholder implementation)
-   * TODO: Replace with bcrypt.hash()
-   */
+  // Number of salt rounds for bcrypt (higher is more secure but slower)
+  private static readonly SALT_ROUNDS = 12;
+
+ 
   static async hashPassword(password: string): Promise<string> {
-    // This is a placeholder - DO NOT use in production
-    // Install bcrypt: npm install bcrypt @types/bcrypt
-    // Then implement: return await bcrypt.hash(password, 10);
-    console.warn('WARNING: Using plain text passwords. Implement bcrypt hashing for production!');
-    return password;
+    return await bcrypt.hash(password, this.SALT_ROUNDS);
   }
 
-  /**
-   * Compare password with hash (placeholder implementation)
-   * TODO: Replace with bcrypt.compare()
-   */
+
   static async comparePassword(password: string, hash: string): Promise<boolean> {
-    // This is a placeholder - DO NOT use in production
-    // Install bcrypt: npm install bcrypt @types/bcrypt
-    // Then implement: return await bcrypt.compare(password, hash);
-    console.warn('WARNING: Using plain text password comparison. Implement bcrypt comparison for production!');
-    return password === hash;
+    return await bcrypt.compare(password, hash);
   }
 
   /**
