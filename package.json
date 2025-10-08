@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",
     "mongodb": "^6.20.0",

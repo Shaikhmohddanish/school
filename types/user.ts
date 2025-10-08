@@ -46,3 +46,14 @@ export interface UpdateUserInput {
   email?: string;
   password?: string;
 }
+
+/**
+ * Base user interface for UI components (flexible for different contexts)
+ */
+export interface BaseUser {
+  name?: string;
+  email: string;
+  _id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
