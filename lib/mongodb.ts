@@ -29,6 +29,7 @@ export default clientPromise
 export async function getDatabase(): Promise<Db> {
   const client = await clientPromise
   return client.db(dbName)
+  
 }
 
 // Helper function to get a specific collection
