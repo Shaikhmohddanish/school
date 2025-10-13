@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from "@/app/header/page";
+import { UserRole } from '@/types/user'
 
 interface User {
   name?: string
   email: string
+  role: UserRole
   loggedIn: boolean
   _id?: string
 }

@@ -1,4 +1,9 @@
 /**
+ * User roles enum
+ */
+export type UserRole = 'user' | 'admin';
+
+/**
  * User interface representing the structure of a user in the database
  */
 export interface User {
@@ -6,6 +11,7 @@ export interface User {
   name: string;
   email: string;
   password: string;
+  role: UserRole;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -17,6 +23,7 @@ export interface CreateUserInput {
   name: string;
   email: string;
   password: string;
+  role?: UserRole; // Optional, defaults to 'user'
 }
 
 /**
@@ -26,6 +33,7 @@ export interface UserResponse {
   _id: string;
   name: string;
   email: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,6 +53,7 @@ export interface UpdateUserInput {
   name?: string;
   email?: string;
   password?: string;
+  role?: UserRole;
 }
 
 /**
@@ -53,6 +62,7 @@ export interface UpdateUserInput {
 export interface BaseUser {
   name?: string;
   email: string;
+  role?: UserRole;
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;

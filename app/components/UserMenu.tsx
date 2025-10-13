@@ -106,6 +106,16 @@ export default function UserMenu({ user, handleLogout }: UserMenuProps) {
             >
               Change Password
             </Link>
+            {user?.role === 'admin' && (
+              <Link
+                href="/admin/dashboard"
+                role="menuitem"
+                className="block px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 font-medium"
+                onClick={() => setOpen(false)}
+              >
+                Admin Dashboard
+              </Link>
+            )}
           </div>
 
           <div className="border-t border-gray-100 py-1">

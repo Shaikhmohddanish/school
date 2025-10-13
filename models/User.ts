@@ -24,6 +24,7 @@ export class UserModel {
     
     const newUser = {
       ...userData,
+      role: userData.role || 'user', // Default to 'user' role if not specified
       createdAt: currentTime,
       updatedAt: currentTime,
     };
@@ -53,6 +54,20 @@ export class UserModel {
   static async findAll(query: any = {}, options: any = {}) {
     const collection = await this.getCollection();
     return await collection.find(query, options).toArray() as unknown as User[];
+  }
+
+  /**
+   * Get all users for admin dashboard (without sensitive data)
+   */
+  static async getAllUsersForAdmin(): Promise<UserResponse[]> {
+    const users = await this.findAll({}, { projection: { password: 0 } });
+    return users.map(user => {
+      // Ensure role field exists for backward compatibility
+      if (!user.role) {
+        user.role = 'user';
+      }
+      return this.toResponse(user);
+    });
   }
 
   /**
@@ -100,6 +115,7 @@ export class UserModel {
       _id: user._id || '',
       name: user.name,
       email: user.email,
+      role: user.role || 'user', // Default to 'user' if role is missing
       createdAt: user.createdAt || new Date(),
       updatedAt: user.updatedAt || new Date(),
     };
